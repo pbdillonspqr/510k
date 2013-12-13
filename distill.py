@@ -18,32 +18,49 @@
 import sys
 import re
 
+terms = {"Trade/Device Name", 
+         "Regulation Number", 
+         "Regulation Name", 
+         "Regulatory Class", 
+         "Product Code", 
+         "Dated", 
+         "Received"}
+
+
+def harvestFields(f):
+    infolist = list()
+    linesprocessed = 0
+    for line in f:
+        # TODO: Search for the relevant terms here
+        # TODO: Check that the length of the line > 5
+        # TODO: Check off each item that we found.
+        if (len(line) > 5):
+            # Clean the line
+            cleanline = line.strip()
+            # TODO: split on ":" or "!"
+            testline = cleanline.split(":")
+            # Select lines that contain relevant information
+            if len(testline) > 1:
+                if (testline[0].strip() in terms):
+                    infolist.append((testline[0], testline[1]))
+                    linesprocessed += 1
+    return infolist
+
 # Given the raw text data from the pdftotext program, find the section from the FDA
 # Returns a list of 7 parts
 def getSummary(filename):
     f = open(filename, "r")
-    infolist = list()
-    highlight = 0
+    # Go through each line of the file until we get a "Re:"
     for line in f:
-        # Get the next line that has text
-        if (highlight > 0) & (len(line)>5):
-            # Clean the line
-            cleanline = line.strip()
-            infolist.append(cleanline)
-            if highlight > 7:
-                # We are done
-                return infolist
-
         # Finds the string "Re:"
         # Starts the line search
-        print line
+        #print line
         if re.search("Re:", line) != None:
-            print "Found"
+            print "Found: 'Re:'"
             # TODO: Find K number in that string (to double check)
-            
             # Returns the next 7 lines that contain text
-            highlight =  1
-
+            infolist = harvestFields(f)
+    return infolist
 
 def getDeviceName(strlist):
     retstr = ""
