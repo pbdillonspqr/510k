@@ -34,7 +34,7 @@ def do_ocr(inputfile, outputfile):
 
   # process OCR if needed
   # overwrites the old outputfile that contains little output from pdf2txt
-  if os.path.getsize("temporary_output.txt") < minPDF2TEXToutputlength:
+  if os.path.getsize(outputfile) < minPDF2TEXToutputlength:
     print "Doing a full OCR of file: " + inputfile
     data = file(inputfile, "rb").read()
     page_num = len(rxcountpages.findall(data))
